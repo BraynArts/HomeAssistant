@@ -1,0 +1,16 @@
+type: horizontal-stack
+cards:
+  - hours_to_show: 24
+    graph: line
+    type: sensor
+    detail: 1
+    entity: sensor.udmp_cpu_usage
+    icon: mdi:chip
+    name: CPU 24H
+  - hours_to_show: 24
+    graph: line
+    type: sensor
+    detail: 1
+    entity: sensor.udmp_mem_usage
+    icon: mdi:memory
+    name: MEM 24H
