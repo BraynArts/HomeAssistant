@@ -1,0 +1,98 @@
+#################### UNIFI ####################
+#connect
+- platform: unifigateway
+  host: 10.100.100.254
+  port: 443
+  version: UDMP-unifiOS
+  username: 
+  password: 
+  monitored_conditions:
+    - www
+    - wan
+    - wlan
+    - lan 
+
+#uptime
+- platform: template
+  sensors:  
+    udmp_uptime:
+      friendly_name: UDMP Uptime
+      value_template: >- 
+        {{((as_timestamp(now()) | int) - (states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['uptime'] | int ) + 3600) | timestamp_custom('%d.%m.%Y @ %-H:%M') }}
+        
+
+#UDMP cpu / mem
+- platform: template
+  sensors:  
+    udmp_cpu_usage:
+      friendly_name: UDMP cpu
+      value_template: >- 
+        {{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] | int }}
+      unit_of_measurement: "%"
+
+    udmp_mem_usage:
+      friendly_name: UDMP mem
+      value_template: >- 
+        {{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] | int }}
+      unit_of_measurement: "%"
+
+#UDMP ip
+
+- platform: template
+  sensors:
+    udmp_ip:
+      friendly_name: UDMP ext ip
+      value_template: >- 
+        {{ states.sensor.unifi_gateway_wan.attributes.wan_ip }}
+
+#UDMP Upload / Download
+- platform: template
+  sensors:       
+    udmp_wan_recieved:
+      friendly_name: UDMP wan recieved
+      value_template: >-
+        {{states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] | filesizeformat()}}
+        
+    udmp_wan_sent:
+      friendly_name: UDMP wan sent
+      value_template: >-
+        {{states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] | filesizeformat()}}
+        
+#UDMP Speedtest
+- platform: template
+  sensors:
+    udmp_speedtest_lastrun:
+      friendly_name: UDMP speedtest Lastrun
+      value_template: >-
+        {{(((as_timestamp(now()) - states.sensor.unifi_gateway_www.attributes['speedtest_lastrun']) | int) - 3600) | timestamp_custom("%H:%M")}}
+        
+    udmp_speedtest_upload:
+      friendly_name: UDMP speedtest Upload
+      value_template: >-
+        {{states.sensor.unifi_gateway_www.attributes['xput_up']}}
+      unit_of_measurement: "Mbps"
+
+    udmp_speedtest_download:
+      friendly_name: UDMP speedtest Download
+      value_template: >-
+        {{states.sensor.unifi_gateway_www.attributes['xput_down']}}
+      unit_of_measurement: "Mbps"
+      
+    udmp_speedtest_ping:
+      friendly_name: UDMP speedtest Ping
+      value_template: >-
+        {{states.sensor.unifi_gateway_www.attributes['speedtest_ping']}}
+      unit_of_measurement: "ms"
+
+#clients
+- platform: template
+  sensors:
+    udmp_lan_clients:
+      friendly_name: UDMP Lan Clients
+      value_template: >-
+        {{states.sensor.unifi_gateway_lan.attributes['num_user']}}
+        
+    udmp_wlan_clients:
+      friendly_name: UDMP Wlan Clients
+      value_template: >-
+        {{states.sensor.unifi_gateway_wlan.attributes['num_user']}}
