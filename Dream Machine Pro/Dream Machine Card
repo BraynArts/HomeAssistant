@@ -1,0 +1,16 @@
+type: custom:mushroom-template-card
+primary: Dream Machine
+secondary: >
+  Uptime:
+  {{((states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['uptime'] |
+  int ) / 86400) | round(0, "floor, default")}} Tag
+
+  Wan IP: {{states("sensor.udmp_ip")}}
+
+  Lastrun: {{states("sensor.udmp_speedtest_lastrun")}} Stunden
+
+  Update: {{states("update.dream_machine_pro")}}
+
+  Status: {{states("sensor.unifi_gateway_wan") }}
+icon: mdi:fire
+multiline_secondary: true
