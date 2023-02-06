@@ -1,0 +1,22 @@
+type: horizontal-stack
+cards:
+  - type: custom:mushroom-entity-card
+    entity: sensor.udmp_wan_recieved
+    icon: mdi:cloud-download
+    name: DOWN
+    layout: vertical
+  - type: custom:mushroom-entity-card
+    entity: sensor.udmp_wan_sent
+    icon: mdi:cloud-upload
+    name: UP
+    layout: vertical
+  - type: custom:mushroom-entity-card
+    entity: sensor.udmp_lan_clients
+    layout: vertical
+    icon: mdi:check-network-outline
+    name: LAN
+  - type: custom:mushroom-entity-card
+    entity: sensor.udmp_wlan_clients
+    icon: mdi:access-point
+    layout: vertical
+    name: WLAN
