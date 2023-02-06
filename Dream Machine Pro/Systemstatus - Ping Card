@@ -1,0 +1,66 @@
+type: horizontal-stack
+cards:
+  - type: custom:mushroom-template-card
+    primary: Systemstatus
+    secondary: |-
+      WWW: {{states("sensor.unifi_gateway_www")}}
+      LAN: {{states("sensor.unifi_gateway_lan")}}
+      WLAN: {{states("sensor.unifi_gateway_wlan")}}
+    icon: mdi:fire
+    multiline_secondary: true
+    icon_color: >-
+      {% if is_state("sensor.unifi_gateway_www", "ERROR") or
+      is_state("sensor.unifi_gateway_wan", "ERROR") or
+      is_state("sensor.unifi_gateway_lan", "ERROR")%}
+        red
+      {%endif%}
+    fill_container: true
+  - type: custom:mushroom-template-card
+    primary: Ping
+    secondary: >-
+      {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][0]['target']
+      | regex_replace(find='.com', replace='', ignorecase=False) }}  {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][0]['latency_average']
+      }}ms
+
+      {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][1]['target']
+      | regex_replace(find='.com', replace='', ignorecase=False) }}      {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][1]['latency_average']
+      }}ms
+
+      {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][2]['target']
+      | regex_replace(find='.com', replace='', ignorecase=False) }}       {{
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][2]['latency_average']
+      }}ms
+    icon: mdi:connection
+    multiline_secondary: true
+    icon_color: >-
+      {% set time =
+      ((states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][0]['latency_average']
+      +
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][1]['latency_average']
+      +
+      states.sensor.unifi_gateway_wan.attributes['uptime_stats']['WAN']['monitors'][2]['latency_average'])
+      / 3 | int) | round(0, "floor, default")%}
+
+
+      {%if (time <= 20) %}
+
+      green
+
+      {%elif (time <= 33) %}
+
+      yellow
+
+      {%elif (time >= 34) %}
+
+      red
+
+      {% else %}
+
+      blue
+
+      {%endif%}
